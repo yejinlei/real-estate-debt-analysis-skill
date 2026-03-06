@@ -390,6 +390,38 @@ def assess_risk(address):
     return risks
 
 
+def generate_price_difference_analysis(anjuke_price, auction_price, auction_discount, price_difference_rate):
+    """
+    生成价格差异分析文本
+    """
+    analysis = []
+    
+    # 分析折扣率
+    if auction_discount <= 0.7:
+        analysis.append("折扣率较低(<70%)，价格优势明显")
+    elif auction_discount <= 0.8:
+        analysis.append("折扣率适中(70-80%)，具有一定价格优势")
+    else:
+        analysis.append("折扣率较高(>80%)，价格优势一般")
+    
+    # 分析价格差异
+    if price_difference_rate >= 0.3:
+        analysis.append(f"法拍价格低于安居客{price_difference_rate*100:.0f}%，差异显著")
+    elif price_difference_rate >= 0.2:
+        analysis.append(f"法拍价格低于安居客{price_difference_rate*100:.0f}%，差异适中")
+    else:
+        analysis.append(f"法拍价格与安居客差异较小({price_difference_rate*100:.0f}%)")
+    
+    # 分析单价水平
+    if anjuke_price > 0:
+        if auction_price < anjuke_price * 0.6:
+            analysis.append("法拍单价显著低于市场价，值得关注")
+        elif auction_price < anjuke_price * 0.8:
+            analysis.append("法拍单价低于市场价，具有投资价值")
+    
+    return "；".join(analysis)
+
+
 def analyze_property(property_info):
     """
     分析单个房产
@@ -419,20 +451,33 @@ def analyze_property(property_info):
     # 风险评估
     risk_assessment = assess_risk(address)
     
+    # 计算法拍单价（元/㎡）
+    auction_unit_price = auction_price
+    
+    # 计算阿里法拍成交价（万元）
+    auction_transaction_price = round(auction_price * area / 10000, 2)
+    
+    # 生成价格差异分析
+    price_difference_analysis = generate_price_difference_analysis(
+        anjuke_price, auction_price, auction_discount, price_difference_rate
+    )
+    
     return {
         "address": address,
         "debt_principal": debt_principal,
         "area": area,
-        "anjuke_average_price": anjuke_price,
-        "anjuke_valuation": round(anjuke_valuation, 2),
-        "auction_transaction_price": round(auction_price * area / 10000, 2),  # 转换为万元
-        "auction_discount_rate": round(auction_discount, 2),
-        "debt_coverage_ratio": round(debt_coverage_ratio, 2),
-        "price_difference_rate": round(price_difference_rate, 2),
-        "liquidity_score": liquidity_score,
-        "investment_value_score": investment_score,
-        "investment_suggestion": investment_suggestion,
-        "risk_assessment": risk_assessment
+        "anjuke_average_price": anjuke_price,  # 安居客中介价格(元/㎡)
+        "anjuke_valuation": round(anjuke_valuation, 2),  # 安居客估值(万元)
+        "auction_transaction_price": auction_transaction_price,  # 阿里法拍成交价(万元)
+        "auction_unit_price": auction_unit_price,  # 法拍单价(元/㎡)
+        "auction_discount_rate": round(auction_discount, 2),  # 法拍折扣率
+        "price_difference_rate": round(price_difference_rate, 2),  # 价格差异率
+        "price_difference_analysis": price_difference_analysis,  # 价格差异分析
+        "debt_coverage_ratio": round(debt_coverage_ratio, 2),  # 债权覆盖率
+        "liquidity_score": liquidity_score,  # 流动性评分
+        "investment_value_score": investment_score,  # 投资价值评分
+        "investment_suggestion": investment_suggestion,  # 投资建议
+        "risk_assessment": risk_assessment  # 风险评估
     }
 
 
