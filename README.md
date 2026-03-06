@@ -174,6 +174,8 @@
 
 ## 安装与使用
 
+### 方法一：直接克隆部署
+
 1. 克隆仓库：
    ```bash
    git clone https://github.com/yejinlei/real-estate-debt-analysis-skill.git
@@ -191,6 +193,14 @@
    ```
 
 4. 部署到Claude SKILL环境
+
+### 方法二：使用npx skill add安装
+
+```bash
+npx skill add https://github.com/yejinlei/real-estate-debt-analysis-skill
+```
+
+此方法会自动将技能添加到您的Claude SKILL环境中，无需手动配置。
 
 ## 注意事项
 
