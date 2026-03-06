@@ -197,7 +197,7 @@
 ### 方法二：使用npx skill add安装
 
 ```bash
-npx skill add https://github.com/yejinlei/real-estate-debt-analysis-skill
+npx skills add yejinlei/real-estate-debt-analysis-skill --skill real-estate-debt-analysis
 ```
 
 此方法会自动将技能添加到您的Claude SKILL环境中，无需手动配置。
